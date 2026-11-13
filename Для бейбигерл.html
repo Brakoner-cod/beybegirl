@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Для тебя</title>
+<link href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbf1f5;--ink:#2b1733;--soft:#7a5f86;--rose:#d63a73;--on-rose:#fff;--bubble:#fff;--line:#ecd3de;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#17112b;--ink:#f6ecfb;--soft:#b9a7cc;--rose:#ff8fb1;--on-rose:#2b1733;--bubble:#261c44;--line:#3a2d5e;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#17112b;--ink:#f6ecfb;--soft:#b9a7cc;--rose:#ff8fb1;--on-rose:#2b1733;--bubble:#261c44;--line:#3a2d5e;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Lora",Georgia,"Times New Roman",serif;min-height:100dvh;-webkit-text-size-adjust:100%}
+.script{font-family:"Marck Script","Segoe Script","Brush Script MT",cursive;font-weight:400}
+[hidden]{display:none!important}
+
+/* ---------- gate ---------- */
+#gate{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;padding:28px 22px;gap:22px;max-width:30rem;margin:0 auto}
+#gate.leave{opacity:0;transform:translateY(-12px);transition:opacity .5s ease,transform .5s ease}
+.who{color:var(--soft);font-size:.95rem;margin:0}
+.bubble{background:var(--bubble);border:1px solid var(--line);border-radius:22px 22px 22px 6px;padding:18px 20px;align-self:flex-start;max-width:92%;animation:pop .5s ease both}
+.bubble p{margin:0;font-size:2rem;line-height:1.15}
+.dots{display:inline-flex;gap:5px;margin-top:10px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--rose);opacity:.35;animation:blink 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
+@keyframes blink{50%{opacity:1}}
+@keyframes pop{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+form{display:contents}
+.row{display:flex;gap:10px}
+input{flex:1;min-width:0;font:inherit;font-size:1.05rem;color:var(--ink);background:var(--bubble);border:1.5px solid var(--line);border-radius:999px;padding:14px 18px}
+input::placeholder{color:var(--soft);opacity:.8}
+input:focus-visible,button:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+button{font:inherit;cursor:pointer;border:0}
+.go{background:var(--rose);color:var(--on-rose);font-weight:500;border-radius:999px;padding:0 22px;min-height:50px}
+.hint{min-height:3.2em;margin:0;color:var(--soft);font-style:italic;font-size:.98rem;line-height:1.5;transition:opacity .4s}
+.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+/* ---------- letter ---------- */
+#letter{max-width:34rem;margin:0 auto;padding:44px 24px 64px}
+#letter h1{font-size:clamp(2.6rem,13vw,3.8rem);line-height:1.05;margin:0 0 6px;color:var(--rose)}
+.to{margin:0 0 30px;color:var(--soft)}
+.p{font-size:1.1rem;line-height:1.75;margin:0 0 1.15em;opacity:0;transform:translateY(10px);transition:opacity .9s ease,transform .9s ease}
+.p.in,.sig.in,.answer.in{opacity:1;transform:none}
+.big{font-size:clamp(2.1rem,10vw,3rem);line-height:1.15;color:var(--rose);margin:.4em 0 .5em}
+.sig{margin:1.6em 0 2em;font-size:1.7rem;opacity:0;transform:translateY(10px);transition:opacity .9s ease,transform .9s ease}
+.answer{opacity:0;transform:translateY(10px);transition:opacity .9s ease,transform .9s ease;border-top:1px solid var(--line);padding-top:26px}
+.answer h2{font-size:1.9rem;margin:0 0 16px;font-weight:400}
+.choices{display:flex;flex-direction:column;gap:10px}
+.yes{background:var(--rose);color:var(--on-rose);border-radius:16px;padding:16px 18px;font-size:1.05rem;font-weight:500}
+.wait{background:transparent;color:var(--ink);border:1.5px solid var(--line);border-radius:16px;padding:16px 18px;font-size:1.05rem}
+.reply{margin:18px 0 0;font-size:1.6rem;color:var(--rose);line-height:1.3}
+@media (prefers-reduced-motion:reduce){
+  .p,.sig,.answer{opacity:1;transform:none;transition:none}
+  .bubble,.shake,.dots i{animation:none}
+  #gate.leave{transition:none}
+}
+</style>
+</head>
+<body>
+
+<main id="gate">
+  <p class="who">Сначала один вопрос</p>
+  <div class="bubble">
+    <p class="script">Где я написал тебе в первый раз?</p>
+    <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+  </div>
+  <form id="f" autocomplete="off">
+    <div class="row">
+      <input id="a" type="text" placeholder="Напиши ответ" aria-label="Ответ" autocapitalize="none" autocorrect="off" enterkeyhint="go">
+      <button class="go" type="submit">Открыть</button>
+    </div>
+    <p class="hint" id="hint" role="status" aria-live="polite"></p>
+  </form>
+</main>
+
+<article id="letter" hidden>
+  <h1 class="script">Прости меня</h1>
+  <p class="to" id="to">Любимая,</p>
+
+  <p class="p">Мне не нравится, когда мы ссоримся. Не потому что я хочу победить в споре, а потому что в такие минуты мне тебя не хватает.</p>
+  <p class="p">Я помню, как написал тебе в первый раз и даже не догадывался, что этот ответ изменит всё. С тех пор ты самый важный человек в моём дне.</p>
+  <p class="p">Я был неправ, когда сделал тебе больно. Я не ищу оправданий. Мне важно не быть правым, а быть с тобой.</p>
+  <p class="p">Рядом с тобой я становлюсь лучше. Ты делаешь меня спокойнее, смелее и счастливее. И я не хочу терять это из-за глупой ссоры.</p>
+  <p class="p">Обещаю, что буду любить тебя всегда и никогда не брошу. Больше никаких шуток про девочек. И я постараюсь больше никогда тебя не расстраивать.</p>
+  <p class="p big script">Я очень сильно тебя люблю.</p>
+  <p class="sig script">Твой бейби борн ♥</p>
+
+  <section class="answer" id="answer">
+    <h2 class="script">Помиримся?</h2>
+    <div class="choices">
+      <button class="yes" id="yes" type="button">Я тоже тебя люблю</button>
+      <button class="wait" id="wait" type="button">Мне нужно немного времени</button>
+    </div>
+    <p class="reply script" id="reply" role="status" aria-live="polite"></p>
+  </section>
+</article>
+
+<script>
+(function(){
+  // Чтобы добавить её имя, впиши его сюда, например: "Аня"
+  var HER_NAME = "Таня";
+
+  var gate = document.getElementById("gate");
+  var letter = document.getElementById("letter");
+  var input = document.getElementById("a");
+  var hint = document.getElementById("hint");
+  var form = document.getElementById("f");
+  var wrong = 0;
+
+  if (HER_NAME) { document.getElementById("to").textContent = HER_NAME + ","; }
+
+  var hints = [
+    "Не совсем. Попробуй ещё раз, я верю в тебя.",
+    "Тепло. Это приложение с короткими видео.",
+    "Подсказка: название начинается на «Тик»…"
+  ];
+
+  function norm(s){
+    return s.toLowerCase().replace(/ё/g,"е").replace(/[^a-zа-я0-9]/g,"");
+  }
+  function isRight(s){
+    var n = norm(s);
+    return n.indexOf("тикток") !== -1 || n.indexOf("tiktok") !== -1 || n === "тт" || n === "tt";
+  }
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    var v = input.value;
+    if (!norm(v)) { hint.textContent = "Напиши, где это было."; return; }
+    if (isRight(v)) { unlock(); return; }
+    hint.textContent = hints[Math.min(wrong, hints.length - 1)];
+    wrong++;
+    input.classList.remove("shake");
+    void input.offsetWidth;
+    input.classList.add("shake");
+    input.select();
+  });
+
+  function unlock(){
+    gate.classList.add("leave");
+    setTimeout(function(){
+      gate.hidden = true;
+      letter.hidden = false;
+      window.scrollTo(0,0);
+      var items = letter.querySelectorAll(".p,.sig,.answer");
+      Array.prototype.forEach.call(items, function(el, i){
+        setTimeout(function(){ el.classList.add("in"); }, 350 + i * 1100);
+      });
+    }, 500);
+  }
+
+  var reply = document.getElementById("reply");
+  document.getElementById("yes").addEventListener("click", function(){
+    reply.textContent = "Тогда я очень сильно тебя люблю и скоро наберу тебе ♥";
+  });
+  document.getElementById("wait").addEventListener("click", function(){
+    reply.textContent = "Хорошо. Я рядом и буду ждать. Я люблю тебя.";
+  });
+})();
+</script>
+</body>
+</html>
